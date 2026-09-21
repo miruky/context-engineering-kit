@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "default": {
+      "max_bytes": 8192,
+      "sources": [
+        {
+          "id": "policy",
+          "paths": [
+            "project/docs/policy.md"
+          ],
+          "trust": "instruction",
+          "priority": 100,
+          "required": true
+        },
+        {
+          "id": "requirements",
+          "paths": [
+            "project/docs/requirements.md"
+          ],
+          "trust": "reference",
+          "priority": 90,
+          "required": true
+        },
+        {
+          "id": "design",
+          "paths": [
+            "project/docs/design.md"
+          ],
+          "trust": "reference",
+          "priority": 70,
+          "required": true
+        },
+        {
+          "id": "current-product",
+          "paths": [
+            "project/app/result.json"
+          ],
+          "trust": "untrusted",
+          "priority": 50,
+          "required": false
+        }
+      ],
+      "exclude": []
+    }
+  }
+}
