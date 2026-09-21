@@ -1,41 +1,59 @@
-# Context Engineering Kit
+# コンテキストエンジニアリングの導入テンプレート
 
-Build a bounded, labelled context packet and detect when its source files change.
+AIへ渡す仕様書・コード・ログを選び、必要な範囲の情報をひとつにまとめます。元のファイルの変更を検出し、作成済みの情報を更新する必要があるか確認します。
 
-[日本語](README.ja.md) · [Workflow and commands](docs/USAGE.md) · [Design and boundaries](docs/ARCHITECTURE.md) · [Codex / Claude Code](docs/INTEGRATIONS.md)
+[英語版](README.en.md) · [操作手順](docs/USAGE.md) · [設計と制約](docs/ARCHITECTURE.md)
 
-## Run after cloning
+## クローン後に試す
 
-Prerequisites: Git and **Python 3.10+**. No pip/npm install, API key or model subscription is needed for the local example. Your application can use any language, framework or test runner.
+必要なものはGitと **Python 3.10以上** です。Pythonはこのツールを動かすために使い、対象アプリの開発言語は限定していません。付属の利用例には、追加パッケージやAPIキーは不要です。
+
+クローンしたディレクトリで実行してください。
 
 ```sh
-git clone <repository-url> context-engineering-kit
-cd context-engineering-kit
+# 実行環境と付属の利用例を確認します
 python3 kit.py doctor
 python3 kit.py demo
-python3 kit.py check
 ```
 
-On Windows use `py -3 kit.py ...`, `dev.cmd ...`, or `./dev.ps1 ...`. On macOS/Linux, `./dev ...` is a short form. Set `AGENTKIT_PYTHON` only if you need a particular interpreter.
+Windowsでは `python3` を `py -3` へ置き換えてください。`dev.cmd` やPowerShellの `./dev.ps1` も使えます。macOS・Linuxでは `./dev` が短い呼び出し方です。
 
-`demo` executes a complete, model-free example in an isolated temporary project and checks expected rejections. `check` tests the toolkit itself. Neither command claims that your own product has been verified. See the documented project commands to verify your own outputs with independent checks.
+`demo` は一時的な作業場所で動きます。クローンしたテンプレートの設定や成果物を、確認済みの状態へ変更しません。
 
-## Use your own project
+## 情報を作成する
 
-Create a working starter with `python3 kit.py new ../my-workspace`, or inspect a non-overwriting installation plan with `python3 kit.py install --target ../existing-project`. Add `--apply` to install the runtime and an example configuration. Existing instructions, active configuration and hooks are preserved. Adapt the file paths and verification argv to your project before a real run.
+`.agentkit/context.json` に対象ファイル、優先度、容量の上限を設定します。
 
-## What the names mean
+```sh
+# 設定した資料から、今回の依頼に使う情報を作成します
+python3 kit.py pack --task "仕様に沿って成果物を更新する"
+```
 
-Context engineering selects and maintains information available to the model. A harness supplies the runtime, tools, permissions and checks that carry out and constrain work. Writing “do not git push” belongs to instructions/context; enforcing a restriction in a runner, credential policy or repository rule is part of the execution system. These concerns overlap.
+出力されたMarkdownを、使いたいAIへ渡してください。`verify` では元ファイルの追加・削除・変更を確認できます。コマンドの詳しい使い方は [操作手順](docs/USAGE.md) にあります。
 
-This kit is one practical implementation, not an official standard or a guarantee of correctness. Review the documented [trust boundaries](docs/ARCHITECTURE.md). In particular, local files/hooks editable by the same account are not an unbreakable security boundary.
+容量の上限にはUTF-8のバイト数を指定します。指示、参考資料、外部の情報には出所の区分を付けます。外部の文章に含まれる命令が自動で無害化されるわけではないため、渡す内容は事前に確認してください。
 
-## Included
+## 自分のプロジェクトへ導入する
 
-- Working project, explicit JSON configuration and deterministic demos.
-- Portable argv adapters with no language-specific build-system detection.
-- Persistent local evidence and meaningful negative-path tests.
-- Pinned CI for Linux, macOS and Windows.
-- Sources, licenses and reproducible validation instructions.
+新しく始める場合は、空の作業場所を作成できます。
 
-MIT licensed. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+```sh
+# テンプレートと実行ツールを新しい作業場所へコピーします
+python3 kit.py new ../my-project
+```
+
+既存のプロジェクトへ追加する場合は、追加予定のファイルを確認してから適用します。
+
+```sh
+# 追加内容を確認してから適用します
+python3 kit.py install --target ../existing-project
+python3 kit.py install --target ../existing-project --apply
+```
+
+既存のAGENTS.md、CLAUDE.md、設定、フックは上書きしません。`.agentkit/context.example.json` のパスやコマンドを実際のプロジェクトへ合わせ、`.agentkit/context.json` として保存してください。導入先のディレクトリでは `python3 .agentkit/tools/context/kit.py --root . inspect` で設定を確認できます。
+
+## 設計上の範囲
+
+このテンプレートは手元で使う開発用ツールです。ローカルの設定や記録は、利用者自身が変更できます。実行権限を制限する場合は、認証情報や実行環境側でも制御してください。詳しい対応範囲は [設計と制約](docs/ARCHITECTURE.md) に記載しています。
+
+ツール自体を変更したときの検査は `python3 kit.py check` で実行できます。ライセンスは [MIT](LICENSE) です。第三者のコードの出典は [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) を参照してください。
